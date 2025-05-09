@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facebook Simulado</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      runTransaction,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFO8DwSnpqnGpZxZvATkvLQrg-EIUm0ZM",
+      authDomain: "rinha-de-campanha.firebaseapp.com",
+      databaseURL: "https://rinha-de-campanha-default-rtdb.firebaseio.com",
+      projectId: "rinha-de-campanha",
+      storageBucket: "rinha-de-campanha.firebasestorage.app",
+      messagingSenderId: "125879515808",
+      appId: "1:125879515808:web:3ab9c86d166fd694bc27c5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Deixe a função global
+    window.curtirPost = function (postId) {
+      const postRef = ref(db, "posts/" + postId + "/likes");
+
+      runTransaction(postRef, (curtidas) => {
+        return (curtidas || 0) + 1;
+      });
+    }
+
+    const postIds = ["crazy_diamond1", "crazy_diamond2"];
+
+    postIds.forEach((postId) => {
+      const likeRef = ref(db, "posts/" + postId + "/likes");
+      const span = document.getElementById(`likes-${postId}`);
+
+      onValue(likeRef, (snapshot) => {
+        const count = snapshot.val() || 0;
+        span.textContent = count + " curtida" + (count !== 1 ? "s" : "");
+      });
+    });
+  </script>
+
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
+    <h1 class="text-2xl font-bold text-blue-600">Facebrook</h1>
+    <div class="flex items-center space-x-4">
+      <input type="text" placeholder="Buscar..."
+        class="px-3 py-1 rounded-md border border-gray-300 focus:outline-none" />
+      <img src="https://i.pravatar.cc/40" alt="Perfil" class="rounded-full w-8 h-8">
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto mt-6 space-y-6 px-4">
+
+    <!-- Post Box -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <div class="flex items-start space-x-3">
+        <img src="https://i.pravatar.cc/50" alt="Avatar" class="w-10 h-10 rounded-full">
+        <textarea placeholder="No que você está pensando?" rows="2"
+          class="w-full p-2 border rounded-md focus:outline-none resize-none"></textarea>
+      </div>
+      <button class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Publicar</button>
+    </div>
+
+    <!-- Example Post -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <div class="flex items-center space-x-3 mb-2">
+        <img src="crazy_diamond/LOGO.png" alt="Avatar" class="w-10 h-10 rounded-full">
+        <div>
+          <p class="font-semibold">Crazy Diamond</p>
+          <p class="text-sm text-gray-500">2 horas atrás</p>
+        </div>
+      </div>
+      <p class="mb-3">Confira nosso principal produto!</p>
+      <img src="crazy_diamond/kit autocuidade.png" alt="Imagem do post" class="w-full rounded-lg">
+      <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+        <span id="likes-crazy_diamond1" class="ml-2 text-sm text-gray-500">0 curtidas</span>
+        <button onclick="curtirPost('crazy_diamond1')"
+          class="flex items-center space-x-1 text-gray-600 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9l3 3m0 0l-3 3m3-3H3" />
+          </svg>
+          <span>Curtir</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Outro Post -->
+    <div class="bg-white p-4 rounded-xl shadow">
+      <div class="flex items-center space-x-3 mb-2">
+        <img src="crazy_diamond/LOGO.png" alt="Avatar" class="w-10 h-10 rounded-full">
+        <div>
+          <p class="font-semibold">Crazy Diamond</p>
+          <p class="text-sm text-gray-500">5 horas atrás</p>
+        </div>
+      </div>
+      <p class="mb-3">O que é o "Kit de AutoCuidade"?</p>
+
+      <video controls class="w-full rounded-lg">
+        <source src="crazy_diamond/autocuidado story.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo HTML5.
+      </video>
+
+      <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+        <button onclick="curtirPost('crazy_diamond1')"
+          class="flex items-center space-x-1 text-gray-600 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9l3 3m0 0l-3 3m3-3H3" />
+          </svg>
+          <span>Curtir</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-500 py-6">
+    &copy; 2025 Facebook Simulado. Projeto educacional.
+  </footer>
+</body>
+
+</html>
