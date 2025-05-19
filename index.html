@@ -1,141 +1,1204 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>O CaraLivro</title>
+    <link rel="shortcut icon" href="3e.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>O CaraLivro</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        runTransaction,
+        onValue,
+      } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
 
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-  import {
-    getDatabase,
-    ref,
-    runTransaction,
-    onValue
-  } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyCFO8DwSnpqnGpZxZvATkvLQrg-EIUm0ZM",
+        authDomain: "rinha-de-campanha.firebaseapp.com",
+        databaseURL: "https://rinha-de-campanha-default-rtdb.firebaseio.com",
+        projectId: "rinha-de-campanha",
+        storageBucket: "rinha-de-campanha.firebasestorage.app",
+        messagingSenderId: "125879515808",
+        appId: "1:125879515808:web:3ab9c86d166fd694bc27c5",
+      };
 
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCFO8DwSnpqnGpZxZvATkvLQrg-EIUm0ZM",
-      authDomain: "rinha-de-campanha.firebaseapp.com",
-      databaseURL: "https://rinha-de-campanha-default-rtdb.firebaseio.com",
-      projectId: "rinha-de-campanha",
-      storageBucket: "rinha-de-campanha.firebasestorage.app",
-      messagingSenderId: "125879515808",
-      appId: "1:125879515808:web:3ab9c86d166fd694bc27c5"
-    };
+      // Deixe a função global
+      window.curtirPost = function (postId) {
+        const postRef = ref(db, "posts/" + postId + "/likes");
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        runTransaction(postRef, (curtidas) => {
+          return (curtidas || 0) + 1;
+        });
+      };
 
-    // Deixe a função global
-    window.curtirPost = function (postId) {
-      const postRef = ref(db, "posts/" + postId + "/likes");
+      const postIds = [
+        'bib1',
+        'bib2',
+        'bib4',
+        'bib5',
+        'bib7',
+        'cd1',
+        'cd2',
+        'nx1',
+        'pv1',
+        'pv2',
+        'pv3',
+        'pv4',
+        'ra1',
+        'ra2',
+        'ra3',
+        'sub1',
+        'sub2',
+        'sub3',
+        'sub4',
+        'gpt1',
+        'gpt2'
+      ];
 
-      runTransaction(postRef, (curtidas) => {
-        return (curtidas || 0) + 1;
+      postIds.forEach((postId) => {
+        const likeRef = ref(db, "posts/" + postId + "/likes");
+        const span = document.getElementById(`likes-${postId}`);
+
+        onValue(likeRef, (snapshot) => {
+          const count = snapshot.val() || 0;
+          span.textContent = count + " curtida" + (count !== 1 ? "s" : "");
+        });
       });
-    }
+    </script>
+  </head>
 
-    const postIds = ["crazy_diamond1", "crazy_diamond2"];
-
-    postIds.forEach((postId) => {
-      const likeRef = ref(db, "posts/" + postId + "/likes");
-      const span = document.getElementById(`likes-${postId}`);
-
-      onValue(likeRef, (snapshot) => {
-        const count = snapshot.val() || 0;
-        span.textContent = count + " curtida" + (count !== 1 ? "s" : "");
-      });
-    });
-  </script>
-
-</head>
-
-<body class="bg-gray-100 text-gray-800">
-  <!-- Header -->
-  <header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
-    <h1 class="text-2xl font-bold text-blue-600">CaraLivro</h1>
-    <div class="flex items-center space-x-4">
-      <input type="text" placeholder="Buscar..."
-        class="px-3 py-1 rounded-md border border-gray-300 focus:outline-none" />
-      <img src="https://i.pravatar.cc/40" alt="Perfil" class="rounded-full w-8 h-8">
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-2xl mx-auto mt-6 space-y-6 px-4">
-
-    <!-- Post Box -->
-    <div class="bg-white p-4 rounded-xl shadow">
-      <div class="flex items-start space-x-3">
-        <img src="https://i.pravatar.cc/50" alt="Avatar" class="w-10 h-10 rounded-full">
-        <textarea placeholder="No que você está pensando?" rows="2"
-          class="w-full p-2 border rounded-md focus:outline-none resize-none"></textarea>
+  <body class="bg-gray-100 text-gray-800">
+    <!-- Header -->
+    <header
+      class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50"
+    >
+      <h1 class="text-2xl font-bold text-blue-600">CaraLivro</h1>
+      <div class="flex items-center space-x-4">
+        <input
+          type="text"
+          placeholder="Buscar..."
+          class="px-3 py-1 rounded-md border border-gray-300 focus:outline-none"
+        />
+        <img src="3e.png" alt="Perfil" class="rounded-full w-8 h-8" />
       </div>
-      <button class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Publicar</button>
-    </div>
+    </header>
 
-    <!-- Example Post -->
-    <div class="bg-white p-4 rounded-xl shadow">
-      <div class="flex items-center space-x-3 mb-2">
-        <img src="crazy_diamond/LOGO.png" alt="Avatar" class="w-10 h-10 rounded-full">
-        <div>
-          <p class="font-semibold">Crazy Diamond</p>
-          <p class="text-sm text-gray-500">2 horas atrás</p>
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto mt-6 space-y-6 px-4">
+      <!-- Post Box -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-start space-x-3">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <textarea
+            placeholder="No que você está pensando?"
+            rows="2"
+            class="w-full p-2 border rounded-md focus:outline-none resize-none"
+          ></textarea>
         </div>
-      </div>
-      <p class="mb-3">Confira nosso principal produto!</p>
-      <img src="crazy_diamond/kit autocuidade.png" alt="Imagem do post" class="w-full rounded-lg">
-      <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
-        <span id="likes-crazy_diamond1" class="ml-2 text-sm text-gray-500">0 curtidas</span>
-        <button onclick="curtirPost('crazy_diamond1')"
-          class="flex items-center space-x-1 text-gray-600 hover:text-blue-600">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9l3 3m0 0l-3 3m3-3H3" />
-          </svg>
-          <span>Curtir</span>
+        <button
+          class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+          Publicar
         </button>
       </div>
-    </div>
 
-    <!-- Outro Post -->
-    <div class="bg-white p-4 rounded-xl shadow">
-      <div class="flex items-center space-x-3 mb-2">
-        <img src="crazy_diamond/LOGO.png" alt="Avatar" class="w-10 h-10 rounded-full">
-        <div>
-          <p class="font-semibold">Crazy Diamond</p>
-          <p class="text-sm text-gray-500">5 horas atrás</p>
+      <!-- PV1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="PV/Logo/Logo_Ponto & Vírgula.jpg"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Ponto e Vírgula</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Na nossa loja, quem ensina tem vantagem!<br />
+          🎓 Encontre tudo para o seu escritório com preços especiais.
+          Aproveite! 🛒💙 <br /><br />
+          #ApoioAosProfessores #MaterialDeEscritório #Descontos
+        </p>
+        <img
+          src="PV/Posts/Post 1.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-pv1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('pv1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
         </div>
       </div>
-      <p class="mb-3">O que é o "Kit de AutoCuidade"?</p>
 
-      <video controls class="w-full rounded-lg">
-        <source src="crazy_diamond/autocuidado story.mp4" type="video/mp4">
-        Seu navegador não suporta vídeo HTML5.
-      </video>
+      <!-- PV2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="PV/Logo/Logo_Ponto & Vírgula.jpg"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Ponto e Vírgula</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Na Ponto e Virgula, sua volta às aulas ou organização do escritório
+          ficou mais fácil! 🏫✨<br />
+          📌 Descontos especiais para professores! <br />
+          📌 Preços baixos em todos os produtos! <br />
+          💳 Aceitamos todos os cartões, PIX e parcelamos sem juros!
+          <br /><br />
+          #OfertasQueValemAPena #MaterialDeEscritório #DescontoParaProfessores"
+        </p>
 
-      <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
-        <span id="likes-crazy_diamond1" class="ml-2 text-sm text-gray-500">0 curtidas</span>
-        <button onclick="curtirPost('crazy_diamond1')"
-          class="flex items-center space-x-1 text-gray-600 hover:text-blue-600">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M14 9l3 3m0 0l-3 3m3-3H3" />
-          </svg>
-          <span>Curtir</span>
-        </button>
+        <video controls class="w-full rounded-lg">
+          <source src="PV/Reels/Reels_1.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-pv2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('pv2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
       </div>
-    </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="text-center text-sm text-gray-500 py-6">
-    &copy; 2025 CaraLivro. Projeto educacional.
-  </footer>
-</body>
+      <!-- Nexus1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">NexusLearn</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Transforme o aprendizado em uma aventura:<br />
+          🏆 Missões educativas com recompensas e badges<br />
+          📈 Rankings motivadores para estimular a turma<br />
+          🎯 Desafios personalizados por matéria e ano escolar<br />
+          🕹️ Interface divertida que os alunos amam<br />
+          <br />💡 Nosso software de gamificação foi criado para educadores
+          inovadores:<br />
+          ✅ Integração fácil com seu conteúdo existente<br />
+          ✅ Relatórios detalhados de desempenho<br />
+          ✅ Planos acessíveis para escolas e professores<br />
+          <br />👉#AprendizadoDivertido #GamificaçãoNaEducação
+          #ProfessorGameChanger<br />
+        </p>
 
+        <img
+          src="Nexus/Aprender-virou-jogo-com-NEXUS-Learn.png"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-nx1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('nx1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PV3 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="PV/Logo/Logo_Ponto & Vírgula.jpg"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Ponto e Vírgula</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Na nossa loja, quem ensina tem vantagem!<br />
+          🎓 Encontre tudo para o seu escritório com preços especiais.
+          Aproveite! 🛒💙 <br /><br />
+          #ApoioAosProfessores #MaterialDeEscritório #Descontos
+        </p>
+        <img
+          src="PV/Posts/Post 2.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-pv3" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('pv3')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PV4 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="PV/Logo/Logo_Ponto & Vírgula.jpg"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Ponto e Vírgula</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Na Ponto e Virgula, sua volta às aulas ou organização do escritório
+          ficou mais fácil! 🏫✨<br />
+          📌 Descontos especiais para professores! <br />
+          📌 Preços baixos em todos os produtos! <br />
+          💳 Aceitamos todos os cartões, PIX e parcelamos sem juros!
+          <br /><br />
+          #OfertasQueValemAPena #MaterialDeEscritório #DescontoParaProfessores"
+        </p>
+        <video controls class="w-full rounded-lg">
+          <source src="PV/Reels/Reels_2.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-pv4" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('pv4')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biboito7 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="biboito/logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Café Biboito</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          ☕✨ CAFÉ BIBOITO: SEU CLUBE DE CAFÉ! ✨☕
+          <br /><br />Todo mês, um novo blend exclusivo chega na sua casa! 🌍🚚
+          Grãos especiais, torra perfeita e aromas incríveis – assine e descubra
+          um mundo de sabores! <br /><br />
+          #CaféBiboito #CaféPorAssinatura #CaféPremium
+        </p>
+
+        <video controls class="w-full rounded-lg">
+          <source src="biboito/Sem nome (Vídeo).mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-bib7" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('bib7')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biboito1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="biboito/logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Café Biboito</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Tudo começa no cultivo, onde o cuidado com o solo e o clima influencia
+          no sabor.
+          <br />
+          <br />
+          Depois, vem a colheita, que pode ser manual para garantir os melhores
+          grãos.
+          <br />
+          <br />
+          Na etapa de secagem, os grãos perdem a umidade antes de serem
+          beneficiados (separados e limpos).
+          <br />
+          <br />
+          A torra é onde a mágica acontece: define o aroma, o corpo e o sabor do
+          café.
+          <br />
+          <br />
+          Por fim, a moagem e o preparo fazem toda a diferença na sua
+          experiência.
+          <br />
+          <br />
+          Beba com consciência, sinta com intensidade!
+        </p>
+        <img
+          src="biboito/bib1.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-bib1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('bib1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Geppetti1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">Geppetti Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Todo mês, uma experiência sommelier na sua porta: rótulos premiados,
+          curadoria de especialistas e histórias que vão além do vinho.
+        </p>
+        <img
+          src="Vinhai/capa.png"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-gpt1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('gpt1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biboito2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="biboito/logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Café Biboito</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          O café mais amado do Brasil! Quem assina o nosso clube já sabe: Café
+          Biboito, o gole bendito do dia esquisito! 😉
+        </p>
+        <img
+          src="biboito/bib2.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-bib2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('bib2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biboito4 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="biboito/logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Café Biboito</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Café vicia ou é só paixão verdadeira? Quem ama café jura que é só
+          amor... mas a ciência diz que a cafeína pode, sim, gerar uma leve
+          dependência.
+          <br /><br />
+          A boa notícia? Diferente de outras substâncias, o café também traz
+          benefícios como mais foco, energia e até proteção para o cérebro.
+          <br /><br />
+          No fim das contas, talvez seja um vício... mas um dos mais gostosos e
+          cheios de aroma que existe! No nosso clube, cada gole é uma nova
+          paixão.☕️💙
+        </p>
+        <img
+          src="biboito/bib4.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-bib4" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('bib4')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reality3 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">Reality</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          ✨ Lições que saltam do livro com modelos 3D interativos<br />
+          🌍 Expedições virtuais para qualquer lugar do mundo – sem sair da
+          sala<br />
+          🔬 Experimentos científicos imersivos que prendem a atenção da
+          turma<br />
+          📊 Conteúdo personalizado para sua disciplina (Matemática, Bio,
+          História e mais!)
+        </p>
+        <img
+          src="RA/Post 2.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-ra3" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('ra3')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biboito5 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="biboito/logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Café Biboito</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Questionamento diário: Tomo café agora ou agorinha? 😂
+        </p>
+        <img
+          src="biboito/bib5.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-bib5" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('bib5')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sublime1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="SUBLIME/Logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Sublime Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Sua casa, sua taça, sua ocasião Sublime.
+          <br />
+          Na Sublime, acreditamos que o extraordinário pode e deve habitar os
+          detalhes do cotidiano. Redefinimos o que é elegância ao torná-la
+          íntima, possível, sua. Um bom vinho, um ambiente acolhedor e a sua
+          presença: essa é a nova forma de viver a sofisticação, em casa, no seu
+          tempo.
+          <br /><br />#Sublime #Emcasa #Vinho
+        </p>
+        <img
+          src="SUBLIME/1°POST.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-sub1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('sub1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sublime2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="SUBLIME/Logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Sublime Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          O par perfeito da sua receita chegou.
+          <br />
+          Sua receita pede um acompanhamento à altura. Por isso o "Uma receita,
+          um vinho" te indica as melhores combinações para você aproveitar no
+          conforto de sua casa, sem perder a fineza de um bom vinho Sublime
+          <br /><br />
+          #Sublime #Receita #Emcasa #Vinho
+        </p>
+
+        <video controls class="w-full rounded-lg">
+          <source src="SUBLIME/2° POST.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-sub2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('sub2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- CrazyDiamond1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="crazy_diamond/LOGO.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Crazy Diamond</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          📚💖 Prof, você merece esse carinho! 💖📚<br />
+          Presenteie-se ou presenteie quem transforma vidas com o Kit
+          Autocuidado para Professores! <br />
+          👉 Descontos especiais para escolas e grupos!
+          <br /><br />#CuidarDeQuemEnsina #KitProfessor #Autocuidado
+        </p>
+        <img
+          src="crazy_diamond/kit autocuidade.png"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-cd1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('cd1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sublime3 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="SUBLIME/Logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Sublime Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Sofisticação é viver com prazer. Viva a Itália, em casa.
+          <br />A primeira edição do nosso Box Temático já tem destino certo,
+          prepare-se para uma experiência que vai muito além da taça.
+          <br />Descubra. Saboreie. Celebre. <br /><br />
+          Tudo sem sair do lugar. #Sublime #Italia #Vinho #Emcasa
+        </p>
+        <img
+          src="SUBLIME/3°POSTed2.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-sub3" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('sub3')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sublime4 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="SUBLIME/Logo.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Sublime Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Crie sua celebração. Viva uma experiência Sublime.
+          <br />A Sublime prepara algo especial para quem caminha ao nosso lado
+          com constância e elegância. Fique atento, a sua experiência favorita
+          de vinho está cada vez mais próxima. <br /><br />
+          #Sublime #Eventodevinho #Vinho
+        </p>
+        <img
+          src="SUBLIME/4°POSTed.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-sub4" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('sub4')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reality2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">Reality</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          💡 Nosso software RA pedagógico foi feito para você:<br />
+          ✅ Fácil de usar – integrado ao seu plano de aula<br />
+          ✅ Offline disponível – perfeito para escolas com infraestrutura
+          limitada<br />
+          ✅ Desconto especial para professores e escolas públicas<br />
+          <br />🎥 Assista ao vídeo e veja a magia acontecer! (#LinkNaBio)<br />
+          <br />👉#EducaçãoDoFuturo #TecnologiaNaEducação #ProfessorInovador<br />
+        </p>
+
+        <video controls class="w-full rounded-lg">
+          <source src="RA/Post Video.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-ra2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('ra2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Geppetti2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">Geppetti Vinhos</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Todo mês, uma experiência sommelier na sua porta: rótulos premiados,
+          curadoria de especialistas e histórias que vão além do vinho.
+        </p>
+        <img
+          src="Vinhai/IMG_5755.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-gpt2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('gpt2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- CrazyDiamond2 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img
+            src="crazy_diamond/LOGO.png"
+            alt="Avatar"
+            class="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">Crazy Diamond</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          💖 Kit Autocuidado para Professores – O Presente que Quem Ensina
+          Merece! 📚
+          <br /><br />
+          Cansado da rotina desgastante? Este kit foi feito para você,
+          professor!
+          <br />Relaxe, recarregue as energias e renove o amor pela missão de
+          educar.
+        </p>
+
+        <video controls class="w-full rounded-lg">
+          <source src="crazy_diamond/autocuidado story.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-cd2" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('cd2')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reality1 -->
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex items-center space-x-3 mb-2">
+          <img src="3e.png" alt="Avatar" class="w-10 h-10 rounded-full" />
+          <div>
+            <p class="font-semibold">Reality</p>
+          </div>
+        </div>
+        <p class="mb-3">
+          Transforme Suas Aulas com Realidade Aumentada!
+          <br />📚✏️ Professor, imagine:<br />
+          - ✨ Lições que saltam do livro com modelos 3D interativos<br />
+          - 🌍 Expedições virtuais para qualquer lugar do mundo – sem sair da
+          sala<br />
+          - 🔬 Experimentos científicos imersivos que prendem a atenção da
+          turma<br />
+          - 📊 Conteúdo personalizado para sua disciplina (Matemática, Bio,
+          História e mais!)
+        </p>
+        <img
+          src="RA/Post 1.jpg"
+          alt="Imagem do post"
+          class="w-full rounded-lg"
+        />
+        <div class="mt-3 flex space-x-4 text-gray-600 text-sm">
+          <span id="likes-ra1" class="ml-2 text-sm text-gray-500"
+            >0 curtidas</span
+          >
+          <button
+            onclick="curtirPost('ra1')"
+            class="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 9l3 3m0 0l-3 3m3-3H3"
+              />
+            </svg>
+            <span>Curtir</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-sm text-gray-500 py-6">
+      &copy; 2025 CaraLivro. Projeto educacional.
+    </footer>
+  </body>
 </html>
